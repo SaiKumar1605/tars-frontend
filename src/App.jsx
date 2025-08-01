@@ -5,6 +5,7 @@ import Login from "./Login";
 import Upload from "./components/Upload";      // ✅ Upload page
 // import Dashboard from "./components/Dashboard"; // ✅ Optional dashboard
 import { fetchSecureDocs } from "./api";
+import EmailCalendar from "./components/EmailCalendar";
 
 
 
@@ -51,6 +52,7 @@ function App() {
         <nav className="space-x-4">
           <Link to="/" className="text-blue-600 underline">Home</Link>
           <Link to="/upload" className="text-blue-600 underline">Upload</Link>
+          <Link to="/calendar" className="text-blue-600 underline">Calendar</Link>
         </nav>
 
         <Routes>
@@ -77,6 +79,8 @@ function App() {
 
           {/* ✅ Upload + Ask page */}
           <Route path="/upload" element={<Upload user={user} />} />
+          <Route path="/calendar" element={<EmailCalendar user={user} />} />
+
         </Routes>
       </div>
     </BrowserRouter>
