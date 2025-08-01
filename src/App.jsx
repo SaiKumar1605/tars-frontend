@@ -1,5 +1,5 @@
 // src/App.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import Login from "./Login";
 import Upload from "./components/Upload";      // ✅ Upload page
@@ -11,6 +11,13 @@ import { fetchSecureDocs } from "./api";
 function App() {
   const [user, setUser] = useState(null);
   const [docs, setDocs] = useState(null);
+
+
+  useEffect(() => {
+    const saved = localStorage.getItem("tars_user");
+    if (saved) setUser(JSON.parse(saved));
+  }, []);
+
 
   const loadDocs = async () => {
     const data = await fetchSecureDocs(user.token);
@@ -52,7 +59,7 @@ function App() {
             path="/"
             element={
               <div>
-                <h1 className="text-xl font-bold">Welcome, {user.email}</h1>
+                <h1 className="text-xl font-bold">Welcome, {user.email} {user.token}</h1>
                 <button
                   className="mt-4 px-4 py-2 bg-green-600 text-white rounded"
                   onClick={loadDocs}

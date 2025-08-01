@@ -6,8 +6,9 @@ export default function Login({ setUser }) {
   const login = async () => {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
-    const token = await result.user.getIdToken();
-    setUser({ email: result.user.email, token });
+    const token = await result.user.getIdToken(true);
+    localStorage.setItem("tars_user", JSON.stringify({ email: result.user.email, token }));
+    setUser({ email: result.user.email, token }); 
   };
 
   return (
