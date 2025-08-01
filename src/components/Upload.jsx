@@ -22,7 +22,7 @@ export default function Upload({ user }) {
     formData.append("file", file);
 
     try {
-      const res = await axios.post("https://tars-backend-i9c5.onrender.com/upload", formData, {
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE}/upload`, formData, {
         headers: {
           Authorization: `Bearer ${user.token}`,
           "Content-Type": "multipart/form-data",
@@ -59,7 +59,7 @@ export default function Upload({ user }) {
 
       const res = await axios.post(
 
-        "https://tars-backend-i9c5.onrender.com/query",
+        `${import.meta.env.VITE_API_BASE}/query`,
         // { question: question },
         formData,
         {

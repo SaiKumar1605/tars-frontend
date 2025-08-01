@@ -23,7 +23,7 @@ export default function EmailCalendar({ user }) {
     formData.append("end", calendarForm.end);
 
     try {
-        const res = await axios.post("https://tars-backend-i9c5.onrender.com/calendar/create", formData, {
+        const res = await axios.post(`${import.meta.env.VITE_API_BASE}/calendar/create`, formData, {
         headers: {
             Authorization: `Bearer ${user.token}`,
         },
