@@ -25,4 +25,4 @@ dist-ssr
 .env
 
 #secrets
-src/firebase-config.js
+src/firebase-config_o.js
