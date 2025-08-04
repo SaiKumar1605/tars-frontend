@@ -6,12 +6,17 @@ import Upload from "./components/Upload";      // ✅ Upload page
 // import Dashboard from "./components/Dashboard"; // ✅ Optional dashboard
 import { fetchSecureDocs } from "./api";
 import EmailCalendar from "./components/EmailCalendar";
-
-
+import AdminDashboard from "./components/AdminDashboard"; // For admin dashboard
+import { auth } from "./firebase-config";
+import { signOut } from "firebase/auth";
 
 function App() {
   const [user, setUser] = useState(null);
   const [docs, setDocs] = useState(null);
+  const ADMIN_EMAILS = ["admin@gmail.com",'ramagiri.saikumar02@gmail.com'];
+  // const isAdmin = ADMIN_EMAILS.includes(user.email);
+  const isAdmin = user && ADMIN_EMAILS.includes(user.email);
+
 
 
   useEffect(() => {
@@ -26,6 +31,19 @@ function App() {
   };
 
   if (!user) return <Login setUser={setUser} />;
+
+  // Logout 
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        setUser(null);  // 👈 Also reset user state in your app
+      })
+      .catch((error) => {
+        console.error("Logout error:", error);
+      });
+  };
+
+
 
   // ############################ OLD ###################################
 
@@ -53,6 +71,12 @@ function App() {
           <Link to="/" className="text-blue-600 underline">Home</Link>
           <Link to="/upload" className="text-blue-600 underline">Upload</Link>
           <Link to="/calendar" className="text-blue-600 underline">Calendar</Link>
+          {isAdmin && <Link to="/admin" className="text-blue-600 underline">Admin</Link>}
+          {user && (
+            <button onClick={handleLogout} className="text-red-600 underline ml-4">
+              Logout
+            </button>
+          )}
         </nav>
 
         <Routes>
@@ -80,7 +104,7 @@ function App() {
           {/* ✅ Upload + Ask page */}
           <Route path="/upload" element={<Upload user={user} />} />
           <Route path="/calendar" element={<EmailCalendar user={user} />} />
-
+          <Route path="/admin" element={<AdminDashboard user={user} />} />
         </Routes>
       </div>
     </BrowserRouter>

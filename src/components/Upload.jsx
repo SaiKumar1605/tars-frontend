@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { motion } from 'framer-motion'
 import { ClipLoader } from "react-spinners";
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "../firebase-config";
 
 export default function Upload({ user }) {
   const [file, setFile] = useState(null);
@@ -11,13 +13,15 @@ export default function Upload({ user }) {
   const [chatHistory, setChatHistory] = useState([]); // 🧠 Chat messages
   const [loading, setLoading] = useState(false); 
   const chatEndRef = useRef(null);
-
+  const [uploading, setUploading] = useState(false) // uploading feedback
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatHistory]);
 
   const handleUpload = async () => {
     if (!file) return;
+    setUploading(true); // Show uploading message
+
     const formData = new FormData();
     formData.append("file", file);
 
@@ -32,6 +36,8 @@ export default function Upload({ user }) {
     } catch (err) {
       console.error(err);
       setUploadMessage("❌ Upload failed.");
+    } finally {
+      setUploading(false); //hide uploading message
     }
 
   };
@@ -71,7 +77,20 @@ export default function Upload({ user }) {
         }
         );
         // setAnswer(res.data.answer || "No answer returned."); // Before CHAT UI for single answer
-        setChatHistory(prev => [...prev, { role: "bot", content: res.data.answer || "No answer returned." }]);
+
+        const answer = res.data.answer || "No answer returned"; //After firebase storage
+
+        // setChatHistory(prev => [...prev, { role: "bot", content: res.data.answer || "No answer returned." }]);
+        setChatHistory(prev => [...prev, { role: "bot", content: answer } ]);
+
+        await addDoc(collection(db, "chatHistory"), {
+          email: user.email,
+          timestamp: new Date().toISOString(),
+          question,
+          // answer: res.data.answer || "No answer returned"
+          answer
+        });
+
     } catch (err) {
             console.error(err);
             // setAnswer("❌ Failed to get response."); // Before CHAT UI for single answer
@@ -104,6 +123,17 @@ export default function Upload({ user }) {
       >
         Upload
       </motion.button>
+
+      {uploading && (
+        <motion.p
+          className="mt-2 text-yellow-600 text-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          ⏳ Uploading...
+        </motion.p>
+      )}
 
 
       {uploadMessage && <p className="mt-4 text-sm">{uploadMessage}</p>}
