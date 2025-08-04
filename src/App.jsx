@@ -1,6 +1,6 @@
 // src/App.jsx
 import { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
 import Login from "./Login";
 import Upload from "./components/Upload";      // ✅ Upload page
 // import Dashboard from "./components/Dashboard"; // ✅ Optional dashboard
@@ -37,6 +37,7 @@ function App() {
     signOut(auth)
       .then(() => {
         setUser(null);  // 👈 Also reset user state in your app
+        Navigate("/");
       })
       .catch((error) => {
         console.error("Logout error:", error);
@@ -85,7 +86,8 @@ function App() {
             path="/"
             element={
               <div>
-                <h1 className="text-xl font-bold">Welcome, {user.email} {user.token}</h1>
+                {/* <h1 className="text-xl font-bold">Welcome, {user.email} {user.token}</h1> */}
+                <h1 className="text-xl font-bold">Welcome, {user.email}</h1>
                 <button
                   className="mt-4 px-4 py-2 bg-green-600 text-white rounded"
                   onClick={loadDocs}

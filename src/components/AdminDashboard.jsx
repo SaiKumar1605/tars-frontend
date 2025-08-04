@@ -1,9 +1,20 @@
 import { useEffect, useState } from "react";
 import { db } from "../firebase-config";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+
+const ADMIN_EMAILS = ["admin@gmail.com",'ramagiri.saikumar02@gmail.com'];
 
 export default function AdminDashboard({ user }) {
   const [chats, setChats] = useState([]);
+  const navigate = useNavigate();
+
+  // 🔐 Access protection
+  useEffect(() => {
+    if (!user || !ADMIN_EMAILS.includes(user.email)) {
+      navigate("/"); // 🚫 redirect if not admin
+    }
+  }, [user, navigate]);
 
   useEffect(() => {
     const fetchData = async () => {
